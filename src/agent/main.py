@@ -34,13 +34,24 @@ def build_report(agent_profile, wallet, payment_context, analysis):
             "opportunity_score": analysis.opportunity_score,
             "signals": analysis.signals,
             "recommendation": analysis.recommendation,
+            "services_used": [
+                {
+                    "service_name": service.service_name,
+                    "endpoint": service.endpoint,
+                    "purpose": service.purpose,
+                    "output": service.output,
+                }
+                for service in analysis.services_used
+            ],
         },
         "autonomy_steps": [
             "Loaded agent configuration",
             "Registered autonomous agent identity",
             "Requested protected Solana intelligence resource",
             "Completed x402-style payment settlement",
-            "Ran Ace Data Cloud-style analysis",
+            "Ran Gemini AI wallet analysis",
+            "Ran Claude AI verification",
+            "Generated Flux visual report concept",
             "Generated final decision report",
         ],
     }
@@ -55,27 +66,44 @@ def save_report(report):
 
     json_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
 
+    services_text = "\n".join(
+        f"- **{service['service_name']}**: `{service['endpoint']}` - {service['purpose']}"
+        for service in report["ace_analysis"]["services_used"]
+    )
+
+    signals_text = "\n".join(
+        f"- {signal}" for signal in report["ace_analysis"]["signals"]
+    )
+
+    steps_text = "\n".join(
+        f"- {step}" for step in report["autonomy_steps"]
+    )
+
     markdown = f"""# Solana Signal Scout Report
 
 Generated at: {report["generated_at"]}
 
 ## Target Wallet
 
-{report["target_wallet"]}
+`{report["target_wallet"]}`
 
 ## Agent
 
-- ID: {report["agent"]["id"]}
+- ID: `{report["agent"]["id"]}`
 - Name: {report["agent"]["name"]}
 - Purpose: {report["agent"]["purpose"]}
 
 ## Payment Context
 
-- Resource: {report["payment_context"]["resource"]}
+- Resource: `{report["payment_context"]["resource"]}`
 - Amount: {report["payment_context"]["amount_usdc"]} USDC
 - Network: {report["payment_context"]["network"]}
 - Status: {report["payment_context"]["payment_status"]}
 - Facilitator: {report["payment_context"]["facilitator"]}
+
+## Ace Data Cloud Services Used
+
+{services_text}
 
 ## Ace Analysis
 
@@ -87,7 +115,7 @@ Opportunity score: **{report["ace_analysis"]["opportunity_score"]}/100**
 
 ## Signals
 
-{chr(10).join(f"- {signal}" for signal in report["ace_analysis"]["signals"])}
+{signals_text}
 
 ## Recommendation
 
@@ -95,7 +123,7 @@ Opportunity score: **{report["ace_analysis"]["opportunity_score"]}/100**
 
 ## Autonomous Steps
 
-{chr(10).join(f"- {step}" for step in report["autonomy_steps"])}
+{steps_text}
 """
 
     md_path.write_text(markdown, encoding="utf-8")
@@ -112,6 +140,7 @@ def render_console_report(report):
 
     table.add_row("Target Wallet", report["target_wallet"])
     table.add_row("Payment Status", report["payment_context"]["payment_status"])
+    table.add_row("Ace Services", "Gemini AI, Claude AI, Flux Image Generation")
     table.add_row("Risk Score", str(report["ace_analysis"]["risk_score"]))
     table.add_row("Opportunity Score", str(report["ace_analysis"]["opportunity_score"]))
     table.add_row("Recommendation", report["ace_analysis"]["recommendation"])
