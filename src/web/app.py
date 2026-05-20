@@ -28,9 +28,21 @@ def home():
                 "opportunity_score": "n/a",
                 "recommendation": "Run the agent to create a report.",
                 "signals": [],
+                "services_used": [],
             },
             "autonomy_steps": [],
         }
+
+    services = "".join(
+        f"""
+        <li>
+          <strong>{service["service_name"]}</strong><br />
+          <code>{service["endpoint"]}</code><br />
+          <span>{service["purpose"]}</span>
+        </li>
+        """
+        for service in report["ace_analysis"].get("services_used", [])
+    )
 
     signals = "".join(f"<li>{signal}</li>" for signal in report["ace_analysis"]["signals"])
     steps = "".join(f"<li>{step}</li>" for step in report["autonomy_steps"])
@@ -49,7 +61,7 @@ def home():
             padding: 40px;
           }}
           .card {{
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
             background: #111827;
             border: 1px solid #334155;
@@ -63,6 +75,7 @@ def home():
             background: #1e293b;
             padding: 3px 6px;
             border-radius: 6px;
+            word-break: break-word;
           }}
           .metrics {{
             display: grid;
@@ -77,12 +90,13 @@ def home():
           }}
           .label {{ color: #94a3b8; font-size: 13px; }}
           .value {{ font-size: 24px; font-weight: bold; margin-top: 6px; }}
+          li {{ margin-bottom: 12px; }}
         </style>
       </head>
       <body>
         <main class="card">
           <h1>Solana Signal Scout</h1>
-          <p>Autonomous Solana wallet research agent using Synapse/OOBE-style identity, x402-style payments, and Ace Data Cloud-style analysis.</p>
+          <p>Autonomous Solana wallet research agent using Synapse/OOBE-style identity, x402-style payments, and three Ace Data Cloud services.</p>
 
           <h2>Target Wallet</h2>
           <code>{report["target_wallet"]}</code>
@@ -101,6 +115,9 @@ def home():
               <div class="value">{report["ace_analysis"]["opportunity_score"]}</div>
             </div>
           </div>
+
+          <h2>Ace Data Cloud Services Used</h2>
+          <ul>{services}</ul>
 
           <h2>Analysis</h2>
           <p>{report["ace_analysis"]["summary"]}</p>
