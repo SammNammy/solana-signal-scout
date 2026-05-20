@@ -2,21 +2,55 @@
 
 Solana Signal Scout is an autonomous Solana research agent demo built for the OOBE / Ace Data Cloud autonomous agent bounty.
 
-The agent performs a full autonomous workflow:
+This project targets the Ace Data Cloud Usage category.
+
+The bounty asks agents in this category to use x402 with Ace Data Cloud's payment facilitator and use at least 3 distinct Ace Data Cloud services. This repo currently documents and models the 3-service workflow with Gemini AI, Claude AI, and Flux Image Generation.
+
+## Autonomous Workflow
+
+The agent performs this flow:
 
 1. Loads agent configuration
 2. Registers a Synapse/OOBE-style agent identity
 3. Requests a protected Solana wallet intelligence resource
 4. Completes an x402-style payment step
-5. Runs Ace Data Cloud-style analysis
-6. Generates a wallet intelligence report
-7. Serves the result in a local web dashboard
+5. Runs Gemini AI for primary wallet analysis
+6. Runs Claude AI for second-model verification
+7. Runs Flux Image Generation for a visual report-card concept
+8. Generates a final wallet intelligence report
+9. Serves the result in a local web dashboard
 
-## Why This Project Exists
+## Ace Data Cloud Services
 
-Most crypto research tools require a human to manually gather wallet data, pay for premium APIs, interpret signals, and write a report.
+### 1. Gemini AI
 
-Solana Signal Scout turns that into a small autonomous workflow. The agent acts on its own, moves through a paid data access flow, analyzes the result, and produces a decision-ready report.
+Endpoint:
+
+POST https://api.acedata.cloud/gemini/chat/completions
+
+Purpose:
+
+Primary Solana wallet intelligence analysis.
+
+### 2. Claude AI
+
+Endpoint:
+
+POST https://api.acedata.cloud/claude/chat/completions
+
+Purpose:
+
+Second-model verification and risk review.
+
+### 3. Flux Image Generation
+
+Endpoint:
+
+POST https://api.acedata.cloud/flux/images
+
+Purpose:
+
+Visual report-card generation for demo and social sharing.
 
 ## Demo Commands
 
@@ -48,13 +82,14 @@ The report includes:
 - Agent identity
 - Payment status
 - Paid resource name
+- Ace services used
 - Risk score
 - Opportunity score
 - Signals
 - Final recommendation
 - Autonomous steps completed
 
-Reports are saved to:
+Reports are generated locally at:
 
 reports/latest_report.json
 reports/latest_report.md
@@ -72,6 +107,7 @@ src/
     app.py
 
 docs/
+  ace_services.md
   demo_script.md
   submission.md
 
